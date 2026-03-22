@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>SUITDEM ERP — Déploiement Clever Cloud</title>
+<style>
+  body { font-family: -apple-system, Arial, sans-serif; max-width: 780px; margin: 40px auto; padding: 0 24px; color: #222; line-height: 1.6; }
+  h1 { color: #2E286B; border-bottom: 3px solid #2E286B; padding-bottom: 10px; }
+  h2 { color: #2E286B; margin-top: 36px; }
+  .step { background: #f4f3fb; border-left: 4px solid #2E286B; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; }
+  .ok   { background: #e8f5e9; border-left: 4px solid #27ae60; padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 10px 0; }
+  .warn { background: #fff8e1; border-left: 4px solid #F4B42A; padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 10px 0; }
+  .badge { display: inline-block; background: #2E286B; color: white; border-radius: 20px; padding: 1px 11px; font-size: 0.82em; font-weight: bold; margin-right: 6px; }
+  code { background: #eee; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.92em; }
+  pre { background: #1e1e2e; color: #cdd6f4; padding: 14px; border-radius: 8px; font-size: 0.9em; line-height: 1.5; overflow-x: auto; }
+  hr { border: none; border-top: 1px solid #ddd; margin: 36px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  th { background: #2E286B; color: white; padding: 7px 10px; text-align: left; }
+  td { border: 1px solid #ddd; padding: 7px 10px; }
+</style>
+</head>
+<body>
+
+<h1>🚀 SUITDEM ERP — Déploiement Clever Cloud</h1>
+<p>Guide testé et validé. Durée estimée : <strong>20 minutes</strong>.</p>
+
+<hr>
+
+<h2><span class="badge">1</span> Prérequis locaux</h2>
+<div class="step">
+  Git installé → vérifier : <code>git --version</code><br>
+  Node.js installé → vérifier : <code>node --version</code>
+</div>
+
+<h2><span class="badge">2</span> Créer le compte Clever Cloud</h2>
+<ol>
+  <li>Aller sur <a href="https://clever-cloud.com" target="_blank">clever-cloud.com</a> → S'inscrire</li>
+  <li>Accéder à <a href="https://console.clever-cloud.com" target="_blank">console.clever-cloud.com</a></li>
+</ol>
+
+<h2><span class="badge">3</span> Ajouter la clé SSH sur GitHub ET Clever Cloud</h2>
+<p>Dans le Terminal :</p>
+<pre>ssh-keygen -t ed25519 -C "ton@email.com"   # Entrée x3
+cat ~/.ssh/id_ed25519.pub                   # Copier le résultat</pre>
+<p>Ajouter cette clé sur <strong>deux endroits</strong> :</p>
+<ul>
+  <li><strong>GitHub</strong> → Settings → SSH and GPG keys → New SSH key</li>
+  <li><strong>Clever Cloud</strong> → Profil → SSH Keys → Add key</li>
+</ul>
+<div class="warn">⚠️ Si la clé n'est pas sur GitHub, le push échouera avec "Permission denied".</div>
+
+<h2><span class="badge">4</span> Créer l'application PHP via GitHub</h2>
+<ol>
+  <li>Console → <strong>Create… → An application</strong></li>
+  <li>Choisir <strong>GitHub</strong> comme source → sélectionner ton repo</li>
+  <li>Type : <strong>PHP</strong> — ⚠️ pas FS Bucket, pas Node.js</li>
+  <li>Région : <strong>Paris</strong>, Plan : <strong>Nano</strong>, Nom : <code>suitdem-erp</code></li>
+</ol>
+<div class="ok">✅ Clever Cloud surveille GitHub et redéploie automatiquement à chaque push.</div>
+
+<h2><span class="badge">5</span> Créer l'add-on MySQL</h2>
+<ol>
+  <li>Console → <strong>Create… → An add-on → MySQL</strong></li>
+  <li>Plan : <strong>DEV</strong> (gratuit), Nom : <code>suitdem-db</code></li>
+  <li>Lier à l'app : <strong>suitdem-erp → Service dependencies → Edit → suitdem-db</strong></li>
+</ol>
+
+<h2><span class="badge">6</span> Récupérer les credentials MySQL</h2>
+<p>Console → <strong>suitdem-db → Addon dashboard → Connection settings</strong></p>
+<table>
+  <tr><th>Champ</th><th>Exemple</th><th>→ config.php</th></tr>
+  <tr><td>Host</td><td><code>bxxxxx.mysql.clever-cloud.com</code></td><td>DB_HOST</td></tr>
+  <tr><td>Port</td><td><code>3306</code></td><td>DB_PORT</td></tr>
+  <tr><td>Database</td><td><code>bxxxxx</code></td><td>DB_NAME</td></tr>
+  <tr><td>Username</td><td><code>uxxxxx</code></td><td>DB_USER</td></tr>
+  <tr><td>Password</td><td><code>xxxxxx</code></td><td>DB_PASS</td></tr>
+</table>
+
+<h2><span class="badge">7</span> Importer le schéma SQL</h2>
+<ol>
+  <li>Console → <strong>suitdem-db → Addon dashboard → phpMyAdmin</strong></li>
+  <li><strong>Cliquer sur le nom de la base</strong> dans la colonne gauche pour la sélectionner</li>
+  <li>Onglet <strong>Importer</strong> → choisir <code>suitdem_schema.sql</code> → Importer</li>
+  <li>✅ 9 tables créées</li>
+</ol>
+<div class="warn">⚠️ Le fichier SQL ne doit pas contenir CREATE DATABASE ni USE — la base est déjà créée.</div>
+
+<h2><span class="badge">8</span> Modifier config.php</h2>
+<p>Dans <code>suitdem_CC/api/config.php</code> — remplacer les credentials MAMP :</p>
+<pre>
+define('DB_HOST', 'bxxxxx.mysql.clever-cloud.com');
+define('DB_PORT', '3306');
+define('DB_NAME', 'bxxxxx');
+define('DB_USER', 'uxxxxx');
+define('DB_PASS', 'votre_password');
+define('API_TOKEN', 'suitdem_secret_2025');
+</pre>
+
+<h2><span class="badge">9</span> Déployer via Git → GitHub → Clever Cloud</h2>
+<pre>
+cd ~/Desktop/suitdem_CC
+git init
+git add .
+git commit -m "SUITDEM ERP v19.75 Clever Cloud"
+git remote add origin git@github.com:TON-USERNAME/suitdem.git
+git push origin main --force
+</pre>
+<p>Suivre le déploiement : console → <strong>suitdem-erp → Activity</strong> → attendre ✅ vert (~2 min).</p>
+
+<div class="warn">⚠️ Si "Everything up-to-date" mais pas de redéploiement :
+<pre>git commit --allow-empty -m "force redeploy"
+git push origin main --force</pre>
+</div>
+
+<h2><span class="badge">10</span> Vérifier</h2>
+<ol>
+  <li>URL de l'app : console → <strong>suitdem-erp → Domain names</strong></li>
+  <li>Tester l'API : <code>https://ton-app.cleverapps.io/api/get.php</code> → doit retourner du JSON</li>
+  <li>Dans l'app → Admin → bouton 🐘 actif → données chargées ✅</li>
+</ol>
+
+<hr>
+
+<h2>🔄 Mise à jour après la 1ère fois</h2>
+<pre>
+cd ~/Desktop/suitdem_CC
+git add .
+git commit -m "description"
+git push origin main
+</pre>
+
+<hr>
+
+<h2>➡️ Migration sur LWS ensuite</h2>
+<ol>
+  <li>Modifier <code>config.php</code> → credentials LWS MySQL (port 3306)</li>
+  <li>Importer <code>suitdem_schema.sql</code> dans phpMyAdmin LWS</li>
+  <li>Uploader tout via FTP dans <code>public_html/</code></li>
+</ol>
+<div class="ok">✅ Même code, même schéma — seul config.php change.</div>
+
+<hr>
+<p style="color:#888;font-size:0.85em;text-align:center;">SUITDEM ERP v19.75 — Guide déploiement Clever Cloud (validé 22/03/2026)</p>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "apps": [
+    {
+      "app_id": "app_5ae6d536-aa27-4aa1-9680-a57235256f2d",
+      "org_id": "orga_03e45d3e-7a03-4316-96dc-e28a18aef28e",
+      "deploy_url": "ftpes://upload.n3-par.clever-cloud.com/",
+      "git_ssh_url": "ftpes://upload.n3-par.clever-cloud.com/",
+      "name": "suitem-erp",
+      "alias": "suitem-erp"
+    },
+    {
+      "app_id": "app_7e2ea449-02b1-4e81-9af2-f1ad732d06aa",
+      "org_id": "orga_03e45d3e-7a03-4316-96dc-e28a18aef28e",
+      "deploy_url": "https://github.com/kdigital00003-design/suitdem.git",
+      "git_ssh_url": "https://github.com/kdigital00003-design/suitdem.git",
+      "name": "suitdem-erp",
+      "alias": "suitdem-erp"
+    }
+  ]
+}
