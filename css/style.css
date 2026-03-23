@@ -756,9 +756,9 @@ summary.sub-summary { background: var(--gray-100) !important; color: var(--accen
 .cr-line-text  { font-family: inherit; font-size: 13px; border-bottom: 1px dotted transparent; height: 25px; line-height: 25px; font-weight: bold; padding-left: 5px; }
 .cr-line-dot   { border-bottom: 1px dotted #000; height: 25px; width: 100%; margin-bottom: 2px; }
 
-.cgv-chapter { border: 1px solid #000; padding: 2px; font-weight: bold; text-align: center; margin: 6px 0 2px 0; font-size: 7pt; break-inside: avoid; background: #f0f0f0; }
-.cgv-article { font-weight: bold; margin-top: 4px; margin-bottom: 1px; font-size: 6.5pt; break-inside: avoid; text-decoration: underline; }
-.cgv-p       { margin: 0 0 2px 0; line-height: 1.1; text-align: justify; font-size: 6pt; }
+.cgv-chapter { border: 1px solid #000; padding: 2px; font-weight: bold; text-align: center; margin: 6px 0 2px 0; font-size: 7.5pt; break-inside: avoid; background: #f0f0f0; }
+.cgv-article { font-weight: bold; margin-top: 4px; margin-bottom: 1px; font-size: 7pt; break-inside: avoid; text-decoration: underline; }
+.cgv-p       { margin: 0 0 2px 0; line-height: 1.1; text-align: justify; font-size: 6.5pt; }
 
 .wide-content { width: 105%; margin-left: -2.5%; }
 
